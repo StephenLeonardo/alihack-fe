@@ -13,3 +13,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendResponse({ data: storedData }); // Send the stored data to the popup
     }
 });
+
+
+
+
