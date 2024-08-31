@@ -101,7 +101,7 @@ function trackToBE(userId, url, timestamp, eventType, textContent) {
                 return
             }
             shouldHideCard = true;
-            const popupContent = `<div style="width: 100%; max-height: 500px; overflow:scroll; max-width: 28rem; margin-top: 1.5rem; padding: 1.5rem; background-color: #f3f4f6; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);">
+            const popupContent = `<div style="max-height: 500px; overflow:scroll; max-width: 28rem; margin-top: 1.5rem; padding: 1.5rem; background-color: #f3f4f6; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);">
                 ${data.minutes_saved <= 0 ? '<h2 style="font-size: 1.125rem; color: #1f2937; margin-bottom: 1rem;">Summary:</h2>' : `<h2 style="font-size: 1.125rem; color: #1f2937; margin-bottom: 1rem;">Save ${data.minutes_saved} minute(s) of your time by reading this <span style="font-weight: 600;">summary</span></h2>` }
                 <p style="color: #374151; font-size: 1rem;">${data.summary}</p>
               </div>`
