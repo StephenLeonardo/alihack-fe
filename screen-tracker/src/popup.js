@@ -120,23 +120,20 @@ chrome.runtime.sendMessage({ action: 'getData' }, (response) => {
         <!-- Title section -->
         <h1 class="text-3xl font-extrabold text-gray-900 mb-6">Topics & Categories</h1>
         
-        <!-- Topics section -->
-        <div class="w-full max-w-md mb-8">
-          <h2 class="text-xl font-semibold text-gray-800 mb-4">Topics:</h2>
-          <div class="grid grid-cols-2 gap-4">
-          ${response.data.topics.map(topic => `<div class="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition-shadow duration-300">
-              <h3 class="text-lg font-bold text-gray-800">${topic}</h3>
-            </div>`).join('')}
-          </div>
-        </div>
-
         <!-- Categories section -->
         <div class="w-full max-w-md">
           <h2 class="text-xl font-semibold text-gray-800 mb-4">Categories:</h2>
-          <div class="space-y-4">
-            ${response.data.categories.map(category => `<div class="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition-shadow duration-300">
-              <h3 class="text-lg font-bold text-gray-800">${category}</h3>
-            </div>`).join('')}  
+          <div class="flex items-center justify-center space-x-2 overflow-scroll">
+          ${response.data.categories.map(category => `<span class="bg-purple-300 text-white px-4 py-2 rounded-full shadow-lg transition-all duration-300 hover:shadow-xl hover:bg-purple-400 cursor-pointer">${category}</span>`).join('')}
+          </div>
+        </div>
+
+
+        <!-- Topics section -->
+        <div class="w-full max-w-md mb-8">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4">Topics:</h2>
+          <div class="flex items-center justify-center space-x-2 overflow-scroll">
+          ${response.data.topics.map(topic => `<span class="bg-red-300 text-white px-4 py-2 rounded-full shadow-lg transition-all duration-300 hover:shadow-xl hover:bg-red-400 cursor-pointer">${topic}</span>`).join('')}
           </div>
         </div>
 
