@@ -62,21 +62,6 @@ function transformToBarData(data) {
     return items;
 }
 
-// Data for the scatter plots
-const data1 = [{
-    x: [1, 4, 7],
-    y: [2, 5, 8],
-    z: [3, 6, 9],
-    mode: 'markers+text',
-    type: 'scatter3d',
-    text: ['Alibaba', 'Hackathon', 'Chrome Extension'],
-    textposition: 'top center',
-    marker: {
-        size: [10, 20, 30],
-        color: ['red', 'blue', 'green']
-    }
-}];
-
 // Layout configuration
 const domainBarLayout = {
     xaxis: {
@@ -121,8 +106,6 @@ const scatterPlotLayout = {
         }
     }
 };
-
-Plotly.newPlot('scatterPlot3D', data1, scatterPlotLayout);
 
 async function getUserId() {
     if (!userId) {
@@ -292,6 +275,38 @@ document.addEventListener("DOMContentLoaded", async (e) => {
             const barData = transformToBarData(data);
             console.log(barData)
             Plotly.newPlot('scatter-plot-1', barData, domainBarLayout);
+        })
+        .catch(error => {
+            console.error('Fetch Error:', error);
+        });
+
+    fetch(apiUrl + '/metrics/topics', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user_id: currUserId,
+                start_time: mondayTimestamp,
+                end_time: sundayTimestamp,
+                type: "DOMAIN"
+            }),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json()
+        })
+        .then(data => {            
+            const transformedData = {
+                x: data.points.map(item => item.x),
+                y: data.points.map(item => item.y),
+                z: data.points.map(item => item.z),
+                text: data.points.map(item => item.label)
+            };
+            
+            Plotly.newPlot('scatterPlot3D', transformedData, scatterPlotLayout);
         })
         .catch(error => {
             console.error('Fetch Error:', error);
