@@ -68,7 +68,7 @@ const data1 = [{
     z: [3, 6, 9],
     mode: 'markers+text',
     type: 'scatter3d',
-    text: ['Point 1', 'Point 2', 'Point 3'],
+    text: ['Alibaba', 'Hackathon', 'Chrome Extension'],
     textposition: 'top center',
     marker: {
         size: [10, 20, 30],
@@ -249,7 +249,7 @@ document.addEventListener("DOMContentLoaded", async (e) => {
             document.getElementById('categoriesList').innerHTML = listItems;
 
             const barData = transformToBarData(data);
-            Plotly.newPlot('scatter-plot-2', barData, domainBarLayout);
+            Plotly.newPlot('scatter-plot-2', barData, categoryBarLayout);
         })
         .catch(error => {
             console.error('Fetch Error:', error);
