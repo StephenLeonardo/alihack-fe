@@ -118,3 +118,9 @@ chrome.runtime.sendMessage({ action: 'getData' }, (response) => {
       document.getElementById('data-display').textContent = JSON.stringify(response.data);
   }
 });
+
+document.getElementById('openInfoTab').addEventListener('click', () => {
+  chrome.tabs.create({
+    url: chrome.runtime.getURL('info_tab.html')
+  });
+});
