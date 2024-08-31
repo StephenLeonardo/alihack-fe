@@ -1,25 +1,10 @@
 import Plotly from 'plotly.js-dist';
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
-let userId = null;
+let userId = "c5cfa6f6a6ea955cac39fd0531963ea2";
 const apiUrl = 'https://flask-alihack-qufcovcchv.ap-southeast-1.fcapp.run';
 
 // Mocks, to remove
-
-const dataList = [
-    { x: 1, y: 2, z: 3, label: 'Point 1' },
-    { x: 4, y: 5, z: 6, label: 'Point 2' },
-    { x: 7, y: 8, z: 9, label: 'Point 3' }
-];
-
-const transformedData = {
-    x: dataList.map(item => item.x),
-    y: dataList.map(item => item.y),
-    z: dataList.map(item => item.z),
-    text: dataList.map(item => item.label)
-};
-
-console.log(transformedData);
 
 // Mock data for response.data.items
 const mockWebsiteItems = [
@@ -143,12 +128,13 @@ async function getUserId() {
   
     // Calculate the difference to Monday (if it's Sunday, go back 6 days)
     const diffToMonday = (currentDay === 0 ? -6 : 1) - currentDay;
-  
+    
     // Get the date of this week's Monday
     const monday = new Date(now);
     monday.setDate(now.getDate() + diffToMonday);
     monday.setHours(0, 0, 0, 0); // Set to the start of the day
   
+
     // Get the date of this week's Sunday
     const sunday = new Date(monday);
     sunday.setDate(monday.getDate() + 6);
@@ -190,104 +176,92 @@ function aggregateTime(data) {
           duration = `${hours}h ${minutes}m`;
         } else if (hours > 0) {
           duration = `${hours}h`;
+        } else if (minutes > 0) {
+            duration = `${minutes}m`;
         } else {
-          duration = `${minutes}m`;
+            duration = '< 1m'
         }
-    
-        return { name: label, duration };
+        
+
+        return { name: `<img src="https://icons.duckduckgo.com/ip2/${label}.ico"></img> <p>${label}</p>`, duration };
       });
     
       return formattedTime;
 }
 
 document.addEventListener("DOMContentLoaded", async (e) => {
-    // const currUserId = await getUserId();
-    // const {fromTime, toTime} = getWeekRangeTimestampsInSeconds();
+    // chrome.runtime.sendMessage({ action: 'getData' }, (response) => {
+    //     if (response && response.data) {
+            // Mock data for response.data.items
 
-    // fetch(apiUrl + '/metrics', {
-    //     method: 'POST',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //         user_id: currUserId,
-    //         start_time: fromTime,
-    //         end_time: toTime,
-    //         type: "CATEGORY"
-    //     }),
-    // })
-    // .then(response => {
-    //     if (!response.ok) {
-    //         throw new Error(`HTTP error! Status: ${response.status}`);
-    //     }
-    //     return response.json()
-    // })
-    // .then(data => {
+            const currUserId = await getUserId();
+            const {mondayTimestamp, sundayTimestamp} = getWeekRangeTimestampsInSeconds();
 
-    //     const formattedTime = aggregateTime(data)
-    //     const listItems = formattedTime.map(item => `
-    //         <li class="flex justify-between p-2 hover:bg-gray-200 rounded">
-    //             <span>${item.name}</span>
-    //             <span>${item.duration}</span>
-    //         </li>
-    //     `).join('');
+            fetch(apiUrl + '/metrics', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: currUserId,
+                    start_time: mondayTimestamp,
+                    end_time: sundayTimestamp,
+                    type: "CATEGORY"
+                }),
+            })
+            .then(response => {
+              if (!response.ok) {
+                  throw new Error(`HTTP error! Status: ${response.status}`);
+              }
+              return response.json()
+            })
+            .then(data => {
 
-    //     document.getElementById('mostVisitedList').innerHTML = listItems;
-    // })
-    // .catch(error => {
-    //     console.error('Fetch Error:', error);
-    // });
+                const formattedTime = aggregateTime(data)
+                const listItems = formattedTime.map(item => `
+                    <li class="flex justify-between p-2 hover:bg-gray-200 rounded">
+                        <span>${item.name}</span>
+                        <span>${item.duration}</span>
+                    </li>
+                `).join('');
+    
+                document.getElementById('mostVisitedList').innerHTML = listItems;
+            })
+            .catch(error => {
+                console.error('Fetch Error:', error);
+            });
 
-    // fetch(apiUrl + '/metrics', {
-    //     method: 'POST',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //         user_id: currUserId,
-    //         start_time: fromTime,
-    //         end_time: toTime,
-    //         type: "DOMAIN"
-    //     }),
-    // })
-    // .then(response => {
-    //     if (!response.ok) {
-    //         throw new Error(`HTTP error! Status: ${response.status}`);
-    //     }
-    //     return response.json()
-    // })
-    // .then(data => {
+            fetch(apiUrl + '/metrics', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: currUserId,
+                    start_time: mondayTimestamp,
+                    end_time: sundayTimestamp,
+                    type: "DOMAIN"
+                }),
+            })
+            .then(response => {
+              if (!response.ok) {
+                  throw new Error(`HTTP error! Status: ${response.status}`);
+              }
+              return response.json()
+            })
+            .then(data => {
 
-    //     const formattedTime = aggregateTime(data)
-    //     const listItems = formattedTime.map(item => `
-    //         <li class="flex justify-between p-2 hover:bg-gray-200 rounded">
-    //             <span>${item.name}</span>
-    //             <span>${item.duration}</span>
-    //         </li>
-    //     `).join('');
-
-    //     document.getElementById('categoriesList').innerHTML = listItems;
-    // })
-    // .catch(error => {
-    //     console.error('Fetch Error:', error);
-    // });
-
-// MOCK DATA
-    const websiteListItems = mockWebsiteItems.map(item => `
-        <li class="flex justify-between p-2 hover:bg-gray-200 rounded">
-            <span>${item.name}</span>
-            <span>${item.duration}</span>
-        </li>
-    `).join('');
-
-    document.getElementById('mostVisitedList').innerHTML = websiteListItems;
-
-    const categoryListItems = mockCategoryItems.map(item => `
-        <li class="flex justify-between p-2 hover:bg-gray-200 rounded">
-            <span>${item.name}</span>
-            <span>${item.duration}</span>
-        </li>
-    `).join('');
-
-    document.getElementById('categoriesList').innerHTML = categoryListItems;
+                const formattedTime = aggregateTime(data)
+                const listItems = formattedTime.map(item => `
+                    <li class="flex justify-between p-2 hover:bg-gray-200 rounded">
+                        <span>${item.name}</span>
+                        <span>${item.duration}</span>
+                    </li>
+                `).join('');
+    
+                document.getElementById('categoriesList').innerHTML = listItems;
+            })
+            .catch(error => {
+                console.error('Fetch Error:', error);
+            });
 });
