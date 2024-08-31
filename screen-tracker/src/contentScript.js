@@ -1,4 +1,4 @@
-// 
+import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
 // contentScript.js
 console.log("Content script is running on this page");
@@ -6,8 +6,7 @@ const pageContent = document.body.innerText;  // Extracts text from the page
 console.log("Page content:", pageContent);
 
 
-const fpPromise = import('https://openfpcdn.io/fingerprintjs/v4')
-    .then(FingerprintJS => FingerprintJS.load())
+const fpPromise = FingerprintJS.load();
 
 
 fpPromise
@@ -40,6 +39,8 @@ fpPromise
     //     .catch(error => {
     //       console.error('There was a problem with the fetch operation:', error);
     //     });
+    const data = { categories: ['cat1', 'cat2'], topics: ['topic1', 'topic2'], summary: "this is the summary" };
+    chrome.runtime.sendMessage({ action: 'sendData', data: data });
 
     })
 
