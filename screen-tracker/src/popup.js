@@ -147,8 +147,11 @@ chrome.runtime.sendMessage({ action: 'getData' }, (response) => {
   }
 });
 
-document.getElementById('openInfoTab').addEventListener('click', () => {
-  chrome.tabs.create({
-    url: chrome.runtime.getURL('info_tab.html')
-  });
-});
+
+document.addEventListener("DOMContentLoaded", (e) => {
+  document.getElementById('openInfoTab').addEventListener('click', () => {
+    chrome.tabs.create({
+      url: chrome.runtime.getURL('info_tab.html')
+    });
+  });  
+})

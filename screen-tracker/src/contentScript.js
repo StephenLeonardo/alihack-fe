@@ -1,5 +1,8 @@
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
+// document.addEventListener("DOMContentLoaded", (event) => {
+  
+
 // contentScript.js
 console.log("Content script is running on this page");
 const pageContent = document.body.innerText;  // Extracts text from the page
@@ -26,12 +29,12 @@ if (localStorage.getItem('userId') == null) {
     })
 } else {
   // send to BE
+  console.log(localStorage.getItem('userId'))
   const data = { categories: ['cat1', 'cat2'], topics: ['topic1', 'topic2'], summary: "this is the summary" };
   chrome.runtime.sendMessage({ action: 'sendData', data: data });
 }
 
 
-// contentScript.js
 
 // Function to log when the URL is opened
 function logUrlOpened(url) {
@@ -108,3 +111,6 @@ function sendStatePing() {
 }
 
 setInterval(sendStatePing, 60000)
+
+
+// });
