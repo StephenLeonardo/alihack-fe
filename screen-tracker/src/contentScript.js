@@ -75,7 +75,7 @@ async function logUrlOpened(url) {
         const userId = await getUserId(); // Call getUserId and wait for the result
         console.log('logUrlOpened', userId)
         const url = window.location.href; // Current page URL
-        const timestamp = new Date().getUTCSeconds(); // Current timestamp
+        const timestamp = Math.floor(Date.now() / 1000);
         const eventType = 'START'; // Example event type
         const textContent = pageContent; // Example text content
 
@@ -96,7 +96,7 @@ async function logUrlClosed(url) {
       const userId = await getUserId(); // Call getUserId and wait for the result
       console.log('logUrlClosed', userId)
       const url = window.location.href; // Current page URL
-      const timestamp = new Date().getUTCSeconds(); // Current timestamp
+      const timestamp = Math.floor(Date.now() / 1000);
       const eventType = 'END'; // Example event type
       const textContent = pageContent; // Example text content
       // Call trackToBE with the obtained userId and other parameters
@@ -156,7 +156,7 @@ async function sendStatePing() {
           const userId = await getUserId(); // Call getUserId and wait for the result
           console.log('sendStatePing', userId)
           const url = window.location.href; // Current page URL
-          const timestamp = new Date().getUTCSeconds(); // Current timestamp
+          const timestamp = Math.floor(Date.now() / 1000);
           const eventType = 'POLL'; // Example event type
           const textContent = pageContent; // Example text content
   
