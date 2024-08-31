@@ -124,8 +124,8 @@ document.addEventListener("DOMContentLoaded", (e) => {
           <!-- Categories section -->
           <div class="w-full max-w-md">
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Categories:</h2>
-            <div class="flex items-center justify-center space-x-2 overflow-scroll">
-            ${response.data.categories.map(category => `<span class="bg-purple-300 text-white px-4 py-2 rounded-full shadow-lg transition-all duration-300 hover:shadow-xl hover:bg-purple-400 cursor-pointer">${category}</span>`).join('')}
+            <div class="flex flex-wrap items-center justify-center space-x-2">
+            <span class="whitespace-nowrap mb-2 bg-purple-300 text-white px-4 py-2 rounded-full shadow-lg transition-all duration-300 hover:shadow-xl hover:bg-purple-400 cursor-pointer">${response.data.category ? response.data.category : "this is a sample category quite long"}</span>
             </div>
           </div>
 
@@ -133,8 +133,8 @@ document.addEventListener("DOMContentLoaded", (e) => {
           <!-- Topics section -->
           <div class="w-full max-w-md mb-8">
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Topics:</h2>
-            <div class="flex items-center justify-center space-x-2 overflow-scroll">
-            ${response.data.topics.map(topic => `<span class="bg-red-300 text-white px-4 py-2 rounded-full shadow-lg transition-all duration-300 hover:shadow-xl hover:bg-red-400 cursor-pointer">${topic}</span>`).join('')}
+            <div class="flex flex-wrap items-center justify-center space-x-2">
+            ${response.data.topics.map(topic => `<span class="whitespace-nowrap mb-2 bg-red-300 text-white px-4 py-2 rounded-full shadow-lg transition-all duration-300 hover:shadow-xl hover:bg-red-400 cursor-pointer">${topic}</span>`).join('')}
             </div>
           </div>
 

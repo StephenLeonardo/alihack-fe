@@ -33,33 +33,34 @@ function trackToBE(userId, url, timestamp, eventType, textContent) {
 
 
 
-    // fetch(apiUrl + '/track', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         },
-    //         body: JSON.stringify({
-    //             event_type: eventType,
-    //             user_id: userId,
-    //             text_content: textContent,
-    //             url: url,
-    //             timestamp: timestamp
-    //         }),
-    //     })
-    //     .then(response => {
-    //       console.log('HERE')
-    //       console.log(response)
-    //       if (!response.ok) {
-    //           throw new Error(`HTTP error! Status: ${response.status}`);
-    //       }
-    //       return response.json()
-    //     })
-    //     .then(data => {
-    //         console.log('Data:', data);
-    //     })
-    //     .catch(error => {
-    //         console.error('Fetch Error:', error);
-    //     });
+    fetch(apiUrl + '/track', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                event_type: eventType,
+                user_id: userId,
+                text_content: textContent,
+                url: url,
+                timestamp: timestamp
+            }),
+        })
+        .then(response => {
+          console.log('HERE')
+          console.log(response)
+          if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json()
+        })
+        .then(data => {
+            console.log('Data:', data);
+            chrome.runtime.sendMessage({ action: 'sendData', data: data });
+        })
+        .catch(error => {
+            console.error('Fetch Error:', error);
+        });
 }
 
 
