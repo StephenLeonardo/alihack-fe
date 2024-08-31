@@ -29,7 +29,11 @@ async function getUserId() {
 }
 
 function trackToBE(userId, url, timestamp, eventType, textContent) {
-    // fetch(apiUrl + '/track/', {
+    console.log('HAHHAHAHAHAHHAHA', eventType)
+
+
+
+    // fetch(apiUrl + '/track', {
     //         method: 'POST',
     //         headers: {
     //             'Content-Type': 'application/json',
@@ -42,12 +46,19 @@ function trackToBE(userId, url, timestamp, eventType, textContent) {
     //             timestamp: timestamp
     //         }),
     //     })
-    //     .then(response => response.json())
+    //     .then(response => {
+    //       console.log('HERE')
+    //       console.log(response)
+    //       if (!response.ok) {
+    //           throw new Error(`HTTP error! Status: ${response.status}`);
+    //       }
+    //       return response.json()
+    //     })
     //     .then(data => {
     //         console.log('Data:', data);
     //     })
     //     .catch(error => {
-    //         console.error('Error:', error);
+    //         console.error('Fetch Error:', error);
     //     });
 }
 
@@ -145,7 +156,7 @@ async function sendStatePing() {
           console.log('sendStatePing', userId)
           const url = window.location.href; // Current page URL
           const timestamp = new Date().getUTCSeconds(); // Current timestamp
-          const eventType = 'START'; // Example event type
+          const eventType = 'POLL'; // Example event type
           const textContent = pageContent; // Example text content
   
           // Call trackToBE with the obtained userId and other parameters
