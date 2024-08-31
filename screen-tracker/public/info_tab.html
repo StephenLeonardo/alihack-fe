@@ -5,6 +5,7 @@
   <script type="module" src="info_tab.js"></script>
 </head>
 <body class="flex h-screen bg-gray-100">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> 
   <!-- Sidebar -->
   <aside class="w-1/4 bg-white shadow-lg p-4">
       <h2 class="text-xl font-semibold mb-4">Sidebar</h2>
@@ -17,14 +18,36 @@
   
   <!-- Main Content -->
   <main class="flex-1 p-6 flex flex-col">
-    <h1 class="text-3xl font-bold mb-8">Graphs</h1>
+    <h1 class="text-3xl font-bold mb-8 mt-2">Graphs</h1>
     <div class="flex flex-row gap-6" id="scatter-plot-box">
-        <div id="scatter-plot-1" class="flex-1 bg-white rounded-lg shadow-md h-96"></div>
-        <div id="scatter-plot-2" class="flex-1 bg-white rounded-lg shadow-md h-96"></div>
+        <div id="scatter-plot-1" class="flex-1 bg-white rounded-lg shadow-md h-96 overflow-hidden"></div>
+        <div id="scatter-plot-2" class="flex-1 bg-white rounded-lg shadow-md h-96 overflow-hidden"></div>
     </div>
-</main>
+
+    <!-- Header -->
+    <header class="flex justify-between items-center mb-6 mt-6">
+      <h1 class="text-3xl font-semibold">Screen Time</h1>
+    </header>
+  
+    <!-- Main Content -->
+    <main>
+      <section class="bg-white p-4 rounded-lg shadow-md mb-6">
+        <h2 class="text-xl mb-2">Daily Usage</h2>
+        <div class="flex justify-between items-center">
+          <span class="text-lg font-medium">4h 30m</span>
+          <div class="w-24 h-24 bg-blue-300 rounded-full flex items-center justify-center text-xl font-bold">📱</div>
+        </div>
+      </section>
+      <section class="bg-white p-4 rounded-lg shadow-md mb-6">
+        <h2 class="text-xl mb-2">Most Visited Websites</h2>
+        <ul id="mostVisitedList">
+          Loading
+        </ul>
+      </section>
+    </main>
+  </main>
   
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-  <script src="./main.js"></script>
+  <script src="./info_tab.js"></script>
 </body>
 </html>

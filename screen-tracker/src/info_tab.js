@@ -1,5 +1,20 @@
 import Plotly from 'plotly.js-dist';
 
+const dataList = [
+    { x: 1, y: 2, z: 3, label: 'Point 1' },
+    { x: 4, y: 5, z: 6, label: 'Point 2' },
+    { x: 7, y: 8, z: 9, label: 'Point 3' }
+];
+
+const transformedData = {
+    x: dataList.map(item => item.x),
+    y: dataList.map(item => item.y),
+    z: dataList.map(item => item.z),
+    text: dataList.map(item => item.label)
+};
+
+console.log(transformedData);
+
 // Data for the scatter plots
 const data1 = [
     {
@@ -51,3 +66,27 @@ const layout = {
 // Render the scatter plots
 Plotly.newPlot('scatter-plot-1', data1, layout);
 Plotly.newPlot('scatter-plot-2', data2, layout);
+
+document.addEventListener("DOMContentLoaded", (e) => {
+    // chrome.runtime.sendMessage({ action: 'getData' }, (response) => {
+    //     if (response && response.data) {
+            // Mock data for response.data.items
+            const mockItems = [
+                { name: "Instagram", duration: "1h 45m" },
+                { name: "Facebook", duration: "1h 10m" },
+                { name: "YouTube", duration: "2h 30m" },
+                { name: "Twitter", duration: "45m" },
+                { name: "LinkedIn", duration: "30m" }
+            ];
+
+            const listItems = mockItems.map(item => `
+                <li class="flex justify-between p-2 hover:bg-gray-200 rounded">
+                    <span>${item.name}</span>
+                    <span>${item.duration}</span>
+                </li>
+            `).join('');
+
+            document.getElementById('mostVisitedList').innerHTML = listItems;
+    //     }
+    // });
+});
