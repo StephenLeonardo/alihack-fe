@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", (e) => {
 
           <!-- Summary section -->
           <div class="w-full max-w-md mt-6 p-6 bg-gray-100 rounded-lg shadow-lg">
-            ${response.data.minutes_saved <= 0 ? '<h2 class="text-lg font-semibold text-gray-800 mb-4">Summary:</h2>' : `<h2 class="text-lg text-gray-800 mb-4">Save ${response.data.minutes_saved} minute(s) of your time by reading this <span class="font-semibold">summary</span> instead</h2>` }
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">Summary:</h2>
             <p class="text-gray-700 text-base">${response.data.summary}</p>
           </div>
         </div>
