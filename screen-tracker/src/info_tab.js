@@ -203,7 +203,7 @@ function aggregateTime(data) {
 
 
         return {
-            name: `<img src="https://icons.duckduckgo.com/ip2/${label}.ico"></img> <p>${label}</p>`,
+            name: label,
             duration
         };
     });
@@ -277,10 +277,13 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 
             const formattedTime = aggregateTime(data)
             const listItems = formattedTime.map(item => `
-                    <li class="flex justify-between p-2 hover:bg-gray-200 rounded">
-                        <span>${item.name}</span>
-                        <span>${item.duration}</span>
-                    </li>
+                <div class="flex justify-between items-center p-4 border border-gray-200">
+                    <div class="flex items-center">
+                        <img src="https://icons.duckduckgo.com/ip2/${item.name}.ico" alt="Description" class="w-8 h-8 mr-2">
+                        <span class="text-sm">${item.name}</span>
+                    </div>
+                    <span class="text-sm">${item.duration}</span>
+                </div>
                 `).join('');
 
             document.getElementById('mostVisitedList').innerHTML = listItems;
