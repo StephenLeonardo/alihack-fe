@@ -1,40 +1,36 @@
-import * as d3 from "d3";
+import Plotly from 'plotly.js-dist';
 
-// Declare the chart dimensions and margins.
-const width = 640;
-const height = 400;
-const marginTop = 20;
-const marginRight = 20;
-const marginBottom = 30;
-const marginLeft = 40;
+// Data for the scatter plot
+const data = [
+    {
+        x: [1, 4, 7],
+        y: [2, 5, 8],
+        z: [3, 6, 9],
+        mode: 'markers+text',
+        type: 'scatter3d',
+        text: ['Point 1', 'Point 2', 'Point 3'],
+        textposition: 'top center',
+        marker: {
+            size: [10, 20, 30], // Custom sizes for each marker
+            color: ['red', 'blue', 'green'] // Optional: Custom colors for each marker
+        }
+    }
+];
 
-// Declare the x (horizontal position) scale.
-const x = d3.scaleUtc()
-    .domain([new Date("2023-01-01"), new Date("2024-01-01")])
-    .range([marginLeft, width - marginRight]);
+// Layout configuration
+const layout = {
+    margin: {
+        l: 0,
+        r: 0,
+        b: 0,
+        t: 0
+    },
+    scene: {
+        xaxis: { title: 'X Axis' },
+        yaxis: { title: 'Y Axis' },
+        zaxis: { title: 'Z Axis' }
+    }
+};
 
-// Declare the y (vertical position) scale.
-const y = d3.scaleLinear()
-    .domain([0, 100])
-    .range([height - marginBottom, marginTop]);
-
-// Create the SVG container.
-const svg = d3.create("svg")
-    .attr("width", width)
-    .attr("height", height);
-
-// Add the x-axis.
-svg.append("g")
-    .attr("transform", `translate(0,${height - marginBottom})`)
-    .call(d3.axisBottom(x));
-
-// Add the y-axis.
-svg.append("g")
-    .attr("transform", `translate(${marginLeft},0)`)
-    .call(d3.axisLeft(y));
-
-// Select the container div
-const container = d3.select("#container")
-
-// Append the SVG element.
-container.append(svg.node());
+// Render the scatter plot
+Plotly.newPlot('scatter-plot', data, layout);
