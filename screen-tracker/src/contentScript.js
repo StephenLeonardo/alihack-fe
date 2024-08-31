@@ -7,6 +7,8 @@ const apiUrl = 'https://flask-alihack-qufcovcchv.ap-southeast-1.fcapp.run';
 const pageContent = document.body.innerText; // Extracts text from the page
 
 let isTabActive = document.visibilityState === 'visible';
+
+// for demo purpose
 let userId = "c5cfa6f6a6ea955cac39fd0531963ea2";
 
 

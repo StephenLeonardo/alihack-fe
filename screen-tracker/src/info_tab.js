@@ -1,6 +1,7 @@
 import Plotly from 'plotly.js-dist';
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
+// for demo purpose
 let userId = "c5cfa6f6a6ea955cac39fd0531963ea2";
 const apiUrl = 'https://flask-alihack-qufcovcchv.ap-southeast-1.fcapp.run';
 
