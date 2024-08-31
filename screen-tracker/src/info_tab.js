@@ -4,83 +4,98 @@ import FingerprintJS from '@fingerprintjs/fingerprintjs';
 let userId = "c5cfa6f6a6ea955cac39fd0531963ea2";
 const apiUrl = 'https://flask-alihack-qufcovcchv.ap-southeast-1.fcapp.run';
 
-// Mocks, to remove
+function secondsToTime(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
 
-// Mock data for response.data.items
-const mockWebsiteItems = [
-    { name: "Instagram", duration: "1h 45m" },
-    { name: "Facebook", duration: "1h 10m" },
-    { name: "YouTube", duration: "2h 30m" },
-    { name: "Twitter", duration: "0h 45m" },
-    { name: "LinkedIn", duration: "0h 30m" }
-];
+    let timeString = '';
+    if (hours > 0) {
+        timeString += `${hours} h `;
+    }
+    if (minutes > 0 || hours > 0) { // Display minutes if there's any hours or minutes
+        timeString += `${minutes} min`;
+    }
+    if (minutes == 0) {
+        return "< 1 min"
+    }
 
-const mockCategoryItems = [
-    { name: "Social Media", duration: "1h 30m" },
-    { name: "Shopping", duration: "1h 15m" },
-    { name: "Entertainment", duration: "2h 45m" },
-    { name: "Work", duration: "0h 30m" },
-    { name: "Other", duration: "0h 15m" }
-];
-
-// Helper function to generate random duration in minutes
-function getRandomDuration(baseDuration) {
-    const [hours, minutes] = baseDuration.split('h').map(part => parseInt(part) || 0);
-    const baseDurationInMinutes = hours * 60 + minutes;
-    const randomFactor = Math.random() * 0.4 + 0.8; // Random factor between 0.8 and 1.2
-    return Math.round(baseDurationInMinutes * randomFactor);
+    return timeString.trim();
 }
 
-// Generate mock traces based on mockItems
-const mockWebsiteTraces = mockWebsiteItems.map((item) => {
+function transformToBarData(data) {
     const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    return {
-        x: weekDays,
-        y: weekDays.map(() => getRandomDuration(item.duration)),
-        name: item.name,
-        type: 'bar'
-    };
-});
+    const labels = {}; // Object to store data by label
 
-const mockCategoryTraces = mockCategoryItems.map((item) => {
-    const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    return {
-        x: weekDays,
-        y: weekDays.map(() => getRandomDuration(item.duration)),
-        name: item.name,
-        type: 'bar'
-    };
-});
+    data.days.forEach((dayData, index) => {
+        const idx = index
+
+        dayData.items.forEach(item => {
+            const label = item.label;
+            const duration = item.duration_seconds;
+
+            // Initialize the label in the object if not already present
+            if (!labels[label]) {
+                labels[label] = {
+                    x: weekDays.slice(),
+                    y: Array(weekDays.length).fill(-1)
+                };
+            }
+
+            // Find the index of the current day
+            labels[label].y[idx] += duration;
+        });
+    });
+
+    // Convert the labels object into the desired array format
+    const items = Object.keys(labels).map(label => ({
+        x: labels[label].x,
+        y: labels[label].y.map(y => {
+            if (y == -1) return 0;
+            return Math.floor(y / 60) > 0 ? Math.floor(y / 60) : 1
+        }),
+        text: labels[label].y.map(y => secondsToTime(y)),
+        name: label,
+        type: 'bar',
+    }));
+
+    return items;
+}
 
 // Data for the scatter plots
-const data1 = [
-    {
-        x: [1, 4, 7],
-        y: [2, 5, 8],
-        z: [3, 6, 9],
-        mode: 'markers+text',
-        type: 'scatter3d',
-        text: ['Point 1', 'Point 2', 'Point 3'],
-        textposition: 'top center',
-        marker: {
-            size: [10, 20, 30],
-            color: ['red', 'blue', 'green']
-        }
+const data1 = [{
+    x: [1, 4, 7],
+    y: [2, 5, 8],
+    z: [3, 6, 9],
+    mode: 'markers+text',
+    type: 'scatter3d',
+    text: ['Point 1', 'Point 2', 'Point 3'],
+    textposition: 'top center',
+    marker: {
+        size: [10, 20, 30],
+        color: ['red', 'blue', 'green']
     }
-];
+}];
 
 // Layout configuration
 const domainBarLayout = {
-    xaxis: {title: ''},
-    yaxis: {title: 'Minutes'},
+    xaxis: {
+        title: ''
+    },
+    yaxis: {
+        title: 'Minutes'
+    },
     barmode: 'relative',
     title: 'Websites',
     barcornerradius: 5
 };
 
 const categoryBarLayout = {
-    xaxis: {title: ''},
-    yaxis: {title: 'Minutes'},
+    xaxis: {
+        title: ''
+    },
+    yaxis: {
+        title: 'Minutes'
+    },
     barmode: 'relative',
     title: 'Categories',
     barcornerradius: 5
@@ -94,15 +109,18 @@ const scatterPlotLayout = {
         t: 0
     },
     scene: {
-        xaxis: { title: 'X Axis' },
-        yaxis: { title: 'Y Axis' },
-        zaxis: { title: 'Z Axis' }
+        xaxis: {
+            title: 'X Axis'
+        },
+        yaxis: {
+            title: 'Y Axis'
+        },
+        zaxis: {
+            title: 'Z Axis'
+        }
     }
 };
 
-// Render the scatter plots
-Plotly.newPlot('scatter-plot-1', mockWebsiteTraces, domainBarLayout);
-Plotly.newPlot('scatter-plot-2', mockCategoryTraces, categoryBarLayout);
 Plotly.newPlot('scatterPlot3D', data1, scatterPlotLayout);
 
 async function getUserId() {
@@ -118,36 +136,37 @@ async function getUserId() {
         }
     }
     return userId;
-  }
+}
 
-  function getWeekRangeTimestampsInSeconds() {
+function getWeekRangeTimestampsInSeconds() {
     const now = new Date();
-  
+
     // Get the current day of the week (0 is Sunday, 1 is Monday, ..., 6 is Saturday)
     const currentDay = now.getDay();
-  
+
     // Calculate the difference to Monday (if it's Sunday, go back 6 days)
     const diffToMonday = (currentDay === 0 ? -6 : 1) - currentDay;
-    
+
     // Get the date of this week's Monday
     const monday = new Date(now);
     monday.setDate(now.getDate() + diffToMonday);
     monday.setHours(0, 0, 0, 0); // Set to the start of the day
-  
+
 
     // Get the date of this week's Sunday
     const sunday = new Date(monday);
     sunday.setDate(monday.getDate() + 6);
     sunday.setHours(23, 59, 59, 999); // Set to the end of the day
-  
+
     // Convert to Unix timestamps (in seconds)
     const mondayTimestamp = Math.floor(monday.getTime() / 1000);
     const sundayTimestamp = Math.floor(sunday.getTime() / 1000);
-  
-    return { mondayTimestamp, sundayTimestamp };
-  }
 
-
+    return {
+        mondayTimestamp,
+        sundayTimestamp
+    };
+}
 
 
 function aggregateTime(data) {
@@ -157,111 +176,120 @@ function aggregateTime(data) {
 
     const aggregateHours = data.days.reduce((acc, day) => {
         day.items.forEach(item => {
-          if (!acc[item.label]) {
-            acc[item.label] = 0;
-          }
-          acc[item.label] += item.duration_seconds; // Sum in seconds
+            if (!acc[item.label]) {
+                acc[item.label] = 0;
+            }
+            acc[item.label] += item.duration_seconds; // Sum in seconds
         });
         return acc;
-      }, {});
-    
-      // Convert seconds to "Xh Ym" format and structure the result
-      const formattedTime = Object.keys(aggregateHours).map(label => {
+    }, {});
+
+    // Convert seconds to "Xh Ym" format and structure the result
+    const formattedTime = Object.keys(aggregateHours).map(label => {
         const totalSeconds = aggregateHours[label];
         const hours = Math.floor(totalSeconds / 3600);
         const minutes = Math.floor((totalSeconds % 3600) / 60);
-    
+
         let duration = '';
         if (hours > 0 && minutes > 0) {
-          duration = `${hours}h ${minutes}m`;
+            duration = `${hours}h ${minutes}m`;
         } else if (hours > 0) {
-          duration = `${hours}h`;
+            duration = `${hours}h`;
         } else if (minutes > 0) {
             duration = `${minutes}m`;
         } else {
             duration = '< 1m'
         }
-        
 
-        return { name: `<img src="https://icons.duckduckgo.com/ip2/${label}.ico"></img> <p>${label}</p>`, duration };
-      });
-    
-      return formattedTime;
+
+        return {
+            name: `<img src="https://icons.duckduckgo.com/ip2/${label}.ico"></img> <p>${label}</p>`,
+            duration
+        };
+    });
+
+    return formattedTime;
 }
 
 document.addEventListener("DOMContentLoaded", async (e) => {
-    // chrome.runtime.sendMessage({ action: 'getData' }, (response) => {
-    //     if (response && response.data) {
-            // Mock data for response.data.items
+    const currUserId = await getUserId();
+    const {
+        mondayTimestamp,
+        sundayTimestamp
+    } = getWeekRangeTimestampsInSeconds();
 
-            const currUserId = await getUserId();
-            const {mondayTimestamp, sundayTimestamp} = getWeekRangeTimestampsInSeconds();
+    fetch(apiUrl + '/metrics', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user_id: currUserId,
+                start_time: mondayTimestamp,
+                end_time: sundayTimestamp,
+                type: "CATEGORY"
+            }),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json()
+        })
+        .then(data => {
 
-            fetch(apiUrl + '/metrics', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    user_id: currUserId,
-                    start_time: mondayTimestamp,
-                    end_time: sundayTimestamp,
-                    type: "CATEGORY"
-                }),
-            })
-            .then(response => {
-              if (!response.ok) {
-                  throw new Error(`HTTP error! Status: ${response.status}`);
-              }
-              return response.json()
-            })
-            .then(data => {
-
-                const formattedTime = aggregateTime(data)
-                const listItems = formattedTime.map(item => `
+            const formattedTime = aggregateTime(data)
+            const listItems = formattedTime.map(item => `
                     <li class="flex justify-between p-2 hover:bg-gray-200 rounded">
                         <span>${item.name}</span>
                         <span>${item.duration}</span>
                     </li>
                 `).join('');
-    
-                document.getElementById('mostVisitedList').innerHTML = listItems;
-            })
-            .catch(error => {
-                console.error('Fetch Error:', error);
-            });
 
-            fetch(apiUrl + '/metrics', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    user_id: currUserId,
-                    start_time: mondayTimestamp,
-                    end_time: sundayTimestamp,
-                    type: "DOMAIN"
-                }),
-            })
-            .then(response => {
-              if (!response.ok) {
-                  throw new Error(`HTTP error! Status: ${response.status}`);
-              }
-              return response.json()
-            })
-            .then(data => {
+            document.getElementById('categoriesList').innerHTML = listItems;
 
-                const formattedTime = aggregateTime(data)
-                const listItems = formattedTime.map(item => `
+            const barData = transformToBarData(data);
+            Plotly.newPlot('scatter-plot-2', barData, domainBarLayout);
+        })
+        .catch(error => {
+            console.error('Fetch Error:', error);
+        });
+
+    fetch(apiUrl + '/metrics', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user_id: currUserId,
+                start_time: mondayTimestamp,
+                end_time: sundayTimestamp,
+                type: "DOMAIN"
+            }),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json()
+        })
+        .then(data => {
+
+            const formattedTime = aggregateTime(data)
+            const listItems = formattedTime.map(item => `
                     <li class="flex justify-between p-2 hover:bg-gray-200 rounded">
                         <span>${item.name}</span>
                         <span>${item.duration}</span>
                     </li>
                 `).join('');
-    
-                document.getElementById('categoriesList').innerHTML = listItems;
-            })
-            .catch(error => {
-                console.error('Fetch Error:', error);
-            });
+
+            document.getElementById('mostVisitedList').innerHTML = listItems;
+
+            const barData = transformToBarData(data);
+            console.log(barData)
+            Plotly.newPlot('scatter-plot-1', barData, domainBarLayout);
+        })
+        .catch(error => {
+            console.error('Fetch Error:', error);
+        });
 });
