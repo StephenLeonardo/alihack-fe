@@ -7,28 +7,28 @@ console.log("Page content:", pageContent);
 
 let isTabActive = document.visibilityState === 'visible';
 
-const fpPromise = FingerprintJS.load();
 
 
-fpPromise
+
+if (localStorage.getItem('userId') == null) {
+  const fpPromise = FingerprintJS.load();
+  fpPromise
     .then(fp => fp.get())
     .then(result => {
       // This is the visitor identifier:
       const visitorId = result.visitorId
-      console.log(visitorId)
+      console.log('userId: ', visitorId)
+      localStorage.setItem('userId', visitorId)
 
-    // send to BE
-
-    const data = { categories: ['cat1', 'cat2'], topics: ['topic1', 'topic2'], summary: "this is the summary" };
-    chrome.runtime.sendMessage({ action: 'sendData', data: data });
-
+      // send to BE
+      const data = { categories: ['cat1', 'cat2'], topics: ['topic1', 'topic2'], summary: "this is the summary" };
+      chrome.runtime.sendMessage({ action: 'sendData', data: data });
     })
-
-
-
-  
-
-
+} else {
+  // send to BE
+  const data = { categories: ['cat1', 'cat2'], topics: ['topic1', 'topic2'], summary: "this is the summary" };
+  chrome.runtime.sendMessage({ action: 'sendData', data: data });
+}
 
 
 // contentScript.js
@@ -55,6 +55,8 @@ function logUrlClosed(url) {
 function handleUrlChange() {
   const currentUrl = window.location.href;
   const storedUrl = localStorage.getItem('activeUrl');
+
+  console.log(localStorage.getItem('userId'))
 
   // If the URL has changed
   if (storedUrl !== currentUrl) {
