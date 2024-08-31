@@ -1,85 +1,123 @@
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
 // document.addEventListener("DOMContentLoaded", (event) => {
-  
+const apiUrl = 'https://flask-alihack-qufcovcchv.ap-southeast-1.fcapp.run';
 
 // contentScript.js
 console.log("Content script is running on this page");
-const pageContent = document.body.innerText;  // Extracts text from the page
+const pageContent = document.body.innerText; // Extracts text from the page
 console.log("Page content:", pageContent);
 
 let isTabActive = document.visibilityState === 'visible';
+let userId = null;
 
 
 
-
-if (localStorage.getItem('userId') == null) {
-  const fpPromise = FingerprintJS.load();
-  fpPromise
-    .then(fp => fp.get())
-    .then(result => {
-      // This is the visitor identifier:
-      const visitorId = result.visitorId
-      console.log('userId: ', visitorId)
-      localStorage.setItem('userId', visitorId)
-
-      // send to BE
-      const data = { categories: ['cat1', 'cat2'], topics: ['topic1', 'topic2'], summary: "this is the summary" };
-      chrome.runtime.sendMessage({ action: 'sendData', data: data });
-    })
-} else {
-  // send to BE
-  console.log(localStorage.getItem('userId'))
-  const data = { categories: ['cat1', 'cat2'], topics: ['topic1', 'topic2'], summary: "this is the summary" };
-  chrome.runtime.sendMessage({ action: 'sendData', data: data });
+async function getUserId() {
+  if (!userId) {
+      try {
+          // Load FingerprintJS
+          const fp = await FingerprintJS.load();
+          // Get the visitor identifier
+          const result = await fp.get();
+          userId = result.visitorId;
+      } catch (error) {
+          console.error('Error generating user ID:', error);
+      }
+  }
+  return userId;
 }
 
+function trackToBE(userId, url, timestamp, eventType, textContent) {
+    // fetch(apiUrl + '/track/', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify({
+    //             event_type: eventType,
+    //             user_id: userId,
+    //             text_content: textContent,
+    //             url: url,
+    //             timestamp: timestamp
+    //         }),
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         console.log('Data:', data);
+    //     })
+    //     .catch(error => {
+    //         console.error('Error:', error);
+    //     });
+}
 
 
 // Function to log when the URL is opened
-function logUrlOpened(url) {
-  console.log(`You have opened this URL: ${url}`);
-  // Store the URL in localStorage
-  localStorage.setItem('activeUrl', url);
+async function logUrlOpened(url) {
+    console.log(`You have opened this URL: ${url}`);
+    // Store the URL in localStorage
+    localStorage.setItem('activeUrl', url);
 
-  // TODO: send to BE
+    // TODO: send to BE
+      try {
+        const userId = await getUserId(); // Call getUserId and wait for the result
+        console.log('logUrlOpened', userId)
+        const url = window.location.href; // Current page URL
+        const timestamp = new Date().getUTCSeconds(); // Current timestamp
+        const eventType = 'START'; // Example event type
+        const textContent = pageContent; // Example text content
+
+        // Call trackToBE with the obtained userId and other parameters
+        trackToBE(userId, url, timestamp, eventType, textContent);
+    } catch (error) {
+        console.error('Error fetching user ID:', error);
+    }
 }
 
 // Function to log when the URL is closed
-function logUrlClosed(url) {
-  console.log(`You have closed this URL: ${url}`);
-  // Remove the URL from localStorage
-  localStorage.removeItem('activeUrl');
+async function logUrlClosed(url) {
+    console.log(`You have closed this URL: ${url}`);
+    // Remove the URL from localStorage
+    localStorage.removeItem('activeUrl');
 
-  // TODO: send to BE
+    try {
+      const userId = await getUserId(); // Call getUserId and wait for the result
+      console.log('logUrlClosed', userId)
+      const url = window.location.href; // Current page URL
+      const timestamp = new Date().getUTCSeconds(); // Current timestamp
+      const eventType = 'END'; // Example event type
+      const textContent = pageContent; // Example text content
+      // Call trackToBE with the obtained userId and other parameters
+      trackToBE(userId, url, timestamp, eventType, textContent);
+  } catch (error) {
+      console.error('Error fetching user ID:', error);
+  }
 }
 
 // Function to handle URL changes
 function handleUrlChange() {
-  const currentUrl = window.location.href;
-  const storedUrl = localStorage.getItem('activeUrl');
+    const currentUrl = window.location.href;
+    const storedUrl = localStorage.getItem('activeUrl');
 
-  console.log(localStorage.getItem('userId'))
-
-  // If the URL has changed
-  if (storedUrl !== currentUrl) {
-      // If there's a previously stored URL, log it as closed
-      if (storedUrl) {
-          logUrlClosed(storedUrl);
-      }
-      // Log the new URL as opened
-      logUrlOpened(currentUrl);
-  }
+    // If the URL has changed
+    if (storedUrl !== currentUrl) {
+        // If there's a previously stored URL, log it as closed
+        if (storedUrl) {
+            logUrlClosed(storedUrl);
+        }
+        // Log the new URL as opened
+        logUrlOpened(currentUrl);
+    }
 }
 
 // Listen for visibility changes
 document.addEventListener('visibilitychange', () => {
-  isTabActive = document.visibilityState === 'visible';
-  if (document.visibilityState === 'visible') {
-      handleUrlChange();
-  } else {
-      logUrlClosed(window.location.href);
-  }
+    isTabActive = document.visibilityState === 'visible';
+    if (document.visibilityState === 'visible') {
+        handleUrlChange();
+    } else {
+        logUrlClosed(window.location.href);
+    }
 });
 
 // Listen for URL changes via back/forward navigation (history API)
@@ -90,27 +128,41 @@ window.addEventListener('hashchange', handleUrlChange);
 
 // Listen for page reloads or when the user navigates away
 window.addEventListener('beforeunload', () => {
-  logUrlClosed(window.location.href);
+    logUrlClosed(window.location.href);
 });
 
 
 
 
-
-
 // Function to perform the operation
-function sendStatePing() {
-  if (isTabActive) {
-      console.log('Performing operation: Page is active.');
+async function sendStatePing() {
+    if (isTabActive) {
+        console.log('Performing operation: Page is active.');
 
-      // send BE
+        // send BE
+        try {
+          const userId = await getUserId(); // Call getUserId and wait for the result
+          console.log('sendStatePing', userId)
+          const url = window.location.href; // Current page URL
+          const timestamp = new Date().getUTCSeconds(); // Current timestamp
+          const eventType = 'START'; // Example event type
+          const textContent = pageContent; // Example text content
+  
+          // Call trackToBE with the obtained userId and other parameters
+          trackToBE(userId, url, timestamp, eventType, textContent);
+      } catch (error) {
+          console.error('Error fetching user ID:', error);
+      }
 
-  } else {
-      console.log('Skipping operation: Page is not active.');
-  }
+    } else {
+        console.log('Skipping operation: Page is not active.');
+    }
 }
 
 setInterval(sendStatePing, 60000)
 
+function main() {
+  handleUrlChange();
+}
 
-// });
+main()
