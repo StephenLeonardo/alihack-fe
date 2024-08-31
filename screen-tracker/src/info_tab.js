@@ -76,6 +76,21 @@ document.addEventListener("DOMContentLoaded", (e) => {
                 { name: "Facebook", duration: "1h 10m" },
                 { name: "YouTube", duration: "2h 30m" },
                 { name: "Twitter", duration: "45m" },
+                { name: "LinkedIn", duration: "30m" },
+                { name: "Instagram", duration: "1h 45m" },
+                { name: "Facebook", duration: "1h 10m" },
+                { name: "YouTube", duration: "2h 30m" },
+                { name: "Twitter", duration: "45m" },
+                { name: "LinkedIn", duration: "30m" },
+                { name: "Instagram", duration: "1h 45m" },
+                { name: "Facebook", duration: "1h 10m" },
+                { name: "YouTube", duration: "2h 30m" },
+                { name: "Twitter", duration: "45m" },
+                { name: "LinkedIn", duration: "30m" },
+                { name: "Instagram", duration: "1h 45m" },
+                { name: "Facebook", duration: "1h 10m" },
+                { name: "YouTube", duration: "2h 30m" },
+                { name: "Twitter", duration: "45m" },
                 { name: "LinkedIn", duration: "30m" }
             ];
 
@@ -87,6 +102,7 @@ document.addEventListener("DOMContentLoaded", (e) => {
             `).join('');
 
             document.getElementById('mostVisitedList').innerHTML = listItems;
-    //     }
+            document.getElementById('categoriesList').innerHTML = listItems;
+            //     }
     // });
 });
