@@ -12,7 +12,6 @@ const data = [
         textposition: 'top center',
         marker: {
             size: [10, 20, 30], // Custom sizes for each marker
-            color: ['red', 'blue', 'green'] // Optional: Custom colors for each marker
         }
     }
 ];
