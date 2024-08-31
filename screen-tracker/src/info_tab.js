@@ -1,7 +1,7 @@
 import Plotly from 'plotly.js-dist';
 
-// Data for the scatter plot
-const data = [
+// Data for the scatter plots
+const data1 = [
     {
         x: [1, 4, 7],
         y: [2, 5, 8],
@@ -11,7 +11,24 @@ const data = [
         text: ['Point 1', 'Point 2', 'Point 3'],
         textposition: 'top center',
         marker: {
-            size: [10, 20, 30], // Custom sizes for each marker
+            size: [10, 20, 30],
+            color: ['red', 'blue', 'green']
+        }
+    }
+];
+
+const data2 = [
+    {
+        x: [10, 20, 30],
+        y: [15, 25, 35],
+        z: [20, 30, 40],
+        mode: 'markers+text',
+        type: 'scatter3d',
+        text: ['Point A', 'Point B', 'Point C'],
+        textposition: 'top center',
+        marker: {
+            size: [20, 30, 40],
+            color: ['purple', 'orange', 'yellow']
         }
     }
 ];
@@ -31,5 +48,6 @@ const layout = {
     }
 };
 
-// Render the scatter plot
-Plotly.newPlot('scatter-plot', data, layout);
+// Render the scatter plots
+Plotly.newPlot('scatter-plot-1', data1, layout);
+Plotly.newPlot('scatter-plot-2', data2, layout);
