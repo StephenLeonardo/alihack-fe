@@ -31,27 +31,13 @@
         </section>
     </div>
 
-    <!-- Header -->
     <header class="flex justify-between items-center mb-6 mt-6">
       <h1 class="text-3xl font-semibold">Screen Time</h1>
     </header>
-  
-    <!-- Main Content -->
-    <main>
-      <section class="bg-white p-4 rounded-lg shadow-md mb-6">
-        <h2 class="text-xl mb-2">Daily Usage</h2>
-        <div class="flex justify-between items-center">
-          <span class="text-lg font-medium">4h 30m</span>
-          <div class="w-24 h-24 bg-blue-300 rounded-full flex items-center justify-center text-xl font-bold">📱</div>
-        </div>
-      </section>
-      <section class="bg-white p-4 rounded-lg shadow-md mb-6">
-        <h2 class="text-xl mb-2">Most Visited Websites</h2>
-        <ul id="mostVisitedList">
-          Loading
-        </ul>
-      </section>
-    </main>
+    <section class="bg-white p-4 rounded-lg shadow-md mb-6">
+      <h2 class="text-xl mb-2">3D Graph</h2>
+      <div id="scatterPlot3D" class="flex-1 bg-white rounded-lg shadow-md h-96 overflow-hidden"></div>
+    </section>
   </main>
   
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
