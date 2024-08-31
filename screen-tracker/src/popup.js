@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", (e) => {
           <div class="w-full max-w-md">
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Categories:</h2>
             <div class="flex flex-wrap items-center justify-center space-x-2">
-            <span class="whitespace-nowrap mb-2 bg-purple-300 text-white px-4 py-2 rounded-full shadow-lg transition-all duration-300 hover:shadow-xl hover:bg-purple-400 cursor-pointer">${response.data.category ? response.data.category : "this is a sample category quite long"}</span>
+            ${response.data.categories.map(category => `<span class="whitespace-nowrap mb-2 bg-purple-300 text-white px-4 py-2 rounded-full shadow-lg transition-all duration-300 hover:shadow-xl hover:bg-purple-400 cursor-pointer">${category}</span>`).join('')}
             </div>
           </div>
 
