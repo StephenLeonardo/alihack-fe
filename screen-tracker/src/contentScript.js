@@ -24,7 +24,7 @@ function injectFloatingCard(htmlContent) {
     card.style.padding = '20px';
     card.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
     card.style.borderRadius = '8px';
-    card.style.zIndex = '1000';
+    card.style.zIndex = '9999';
     card.style.width = '450px';
 
     // Create the close button

@@ -280,6 +280,11 @@ document.addEventListener("DOMContentLoaded", async (e) => {
             console.error('Fetch Error:', error);
         });
 
+    var now = new Date();
+    var startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var startOfTomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+
+
     fetch(apiUrl + '/metrics/topics', {
             method: 'POST',
             headers: {
@@ -287,8 +292,8 @@ document.addEventListener("DOMContentLoaded", async (e) => {
             },
             body: JSON.stringify({
                 user_id: currUserId,
-                start_time: mondayTimestamp,
-                end_time: sundayTimestamp,
+                start_time: startOfDay / 1000,
+                end_time: startOfTomorrow / 1000,
                 type: "DOMAIN"
             }),
         })
