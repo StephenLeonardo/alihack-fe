@@ -144,7 +144,7 @@ function getWeekRangeTimestampsInSeconds() {
 
     // Convert to Unix timestamps (in seconds)
     const mondayTimestamp = Math.floor(monday.getTime() / 1000);
-    const sundayTimestamp = Math.floor(sunday.getTime() / 1000);
+    const sundayTimestamp = Math.floor(sunday.getTime() / 1000) + 1;
 
     return {
         mondayTimestamp,
@@ -188,9 +188,12 @@ function aggregateTime(data) {
 
         return {
             name: label,
-            duration
+            duration,
+            duration_seconds: totalSeconds
         };
     });
+
+    formattedTime.sort((a, b) => b.duration_seconds - a.duration_seconds);
 
     return formattedTime;
 }
@@ -224,10 +227,12 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 
             const formattedTime = aggregateTime(data)
             const listItems = formattedTime.map(item => `
-                    <li class="flex justify-between p-2 hover:bg-gray-200 rounded">
-                        <span>${item.name}</span>
-                        <span>${item.duration}</span>
-                    </li>
+                    <div class="flex justify-between items-center p-4 border border-gray-200">
+                    <div class="flex items-center">
+                        <span class="text-sm">${item.name}</span>
+                    </div>
+                    <span class="text-sm">${item.duration}</span>
+                </div>
                 `).join('');
 
             document.getElementById('categoriesList').innerHTML = listItems;
@@ -273,7 +278,6 @@ document.addEventListener("DOMContentLoaded", async (e) => {
             document.getElementById('mostVisitedList').innerHTML = listItems;
 
             const barData = transformToBarData(data);
-            console.log(barData)
             Plotly.newPlot('scatter-plot-1', barData, domainBarLayout);
         })
         .catch(error => {
@@ -293,8 +297,7 @@ document.addEventListener("DOMContentLoaded", async (e) => {
             body: JSON.stringify({
                 user_id: currUserId,
                 start_time: startOfDay / 1000,
-                end_time: startOfTomorrow / 1000,
-                type: "DOMAIN"
+                end_time: startOfTomorrow / 1000
             }),
         })
         .then(response => {
@@ -303,15 +306,30 @@ document.addEventListener("DOMContentLoaded", async (e) => {
             }
             return response.json()
         })
-        .then(data => {            
+        .then(data => {       
+            const minSize = 5;
+            const maxSize = 20;
+            // const sizeScaled = data.points.map(s => Math.max(minSize, Math.min(maxSize, s * 10)));
+
+            
             const transformedData = {
                 x: data.points.map(item => item.x),
                 y: data.points.map(item => item.y),
                 z: data.points.map(item => item.z),
-                text: data.points.map(item => item.label)
+                text: data.points.map(item => item.label),
+                textposition: 'top center', // Position of the text relative to markers
+                mode: 'markers+text', // Show both markers and text
+                type: 'scatter3d',
+                marker: {
+                    size: minSize,
+                    colorscale: 'Viridis',
+                    opacity: 0.8
+                }
             };
-            
-            Plotly.newPlot('scatterPlot3D', transformedData, scatterPlotLayout);
+
+            console.log(transformedData)
+
+            Plotly.newPlot('scatterPlot3D', [transformedData], scatterPlotLayout);
         })
         .catch(error => {
             console.error('Fetch Error:', error);
