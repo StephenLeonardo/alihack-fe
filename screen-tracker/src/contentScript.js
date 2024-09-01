@@ -12,7 +12,7 @@ let shouldHideCard = false;
 // for demo purpose
 let userId = "c5cfa6f6a6ea955cac39fd0531963ea2";
 
-function injectFloatingCard(htmlContent) {
+function injectFloatingCard(htmlContent, isSundayNotif) {
     console.log(htmlContent)
 
     // Create the card container
@@ -54,6 +54,12 @@ function injectFloatingCard(htmlContent) {
 
     // Append the card to the body
     document.body.appendChild(card);
+
+    document.getElementById('openPageButton').addEventListener('click', () => {
+      chrome.runtime.sendMessage({ action: 'createTab', url: chrome.runtime.getURL('info_tab.html') });
+  });
+
+
 }
 
 async function getUserId() {
@@ -105,7 +111,7 @@ function trackToBE(userId, url, timestamp, eventType, textContent) {
                 <h2 style="font-size: 1.125rem; color: #1f2937; margin-bottom: 1rem;">Save ${data.minutes_saved} minute(s) of your time by reading this <span style="font-weight: 600;">summary</span></h2>
                 <p style="color: #374151; font-size: 1rem;">${data.summary}</p>
               </div>`
-            injectFloatingCard(popupContent)
+            injectFloatingCard(popupContent, false)
         })
         .catch(error => {
             console.error('Fetch Error:', error);
@@ -213,7 +219,57 @@ async function sendStatePing() {
 
 setInterval(sendStatePing, 60000)
 
+
+function showSundayNotif() {
+  // Get the current date
+  const today = new Date();
+
+  // Check if today is Sunday (0 represents Sunday in JavaScript)
+  if (today.getDay() === 0) {
+    // Perform your operation here
+    const beginningOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const timestamp = beginningOfToday.getTime();
+    const hasNotif = localStorage.getItem(`sunday_notif_${timestamp}`)
+    if (!hasNotif) {
+      localStorage.setItem(`sunday_notif_${timestamp}`, true)
+      shouldHideCard = true
+
+      const htmlContent = `<div style="max-height: 500px; overflow:scroll; max-width: 28rem; margin-top: 1.5rem; padding: 1.5rem; background-color: #f3f4f6; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);">
+                <h2 style="font-size: 1.125rem; color: #1f2937; margin-bottom: 1rem;">Take a look at your weekly screen time report</h2>
+                <div style="display: flex; justify-content: center; align-items: center; margin: 0.5rem;">
+                  <button 
+                      id="openPageButton"
+                      type="button" 
+                      style="
+                          outline: none; 
+                          color: white; 
+                          background-color: #10b981; /* bg-green-500 */
+                          border: none; 
+                          border-radius: 0.5rem; /* rounded-lg */
+                          font-size: 0.875rem; /* text-sm */
+                          padding: 0.625rem 1.25rem; /* px-5 py-2.5 */
+                          margin-right: 0.5rem; /* me-2 */
+                          margin-bottom: 0.5rem; /* mb-2 */
+                          font-weight: 500; /* font-medium */
+                          transition: background-color 0.2s, box-shadow 0.2s; /* smooth transitions */
+                      "
+                      onmouseover="this.style.backgroundColor='#34d399'" /* hover:bg-green-400 */
+                      onmouseout="this.style.backgroundColor='#10b981'" /* bg-green-500 */
+                      onfocus="this.style.boxShadow='0 0 0 4px rgba(16, 185, 129, 0.4)'" /* focus:ring-4 focus:ring-green-300 */
+                      onblur="this.style.boxShadow='none'"
+                  >
+                      Check your screen time
+                  </button>
+              </div>
+              </div>`
+      injectFloatingCard(htmlContent, true)
+    }
+  }
+
+}
+
 function main() {
+    showSundayNotif();
     handleUrlChange();
 }
 
