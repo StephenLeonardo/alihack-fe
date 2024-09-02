@@ -55,9 +55,15 @@ function injectFloatingCard(htmlContent, isSundayNotif) {
     // Append the card to the body
     document.body.appendChild(card);
 
-    document.getElementById('openPageButton').addEventListener('click', () => {
-      chrome.runtime.sendMessage({ action: 'createTab', url: chrome.runtime.getURL('info_tab.html') });
-  });
+    if (isSundayNotif) {
+        document.getElementById('openPageButton').addEventListener('click', () => {
+            chrome.runtime.sendMessage({
+                action: 'createTab',
+                url: chrome.runtime.getURL('info_tab.html')
+            });
+        });
+    }
+
 
 
 }
@@ -221,20 +227,20 @@ setInterval(sendStatePing, 60000)
 
 
 function showSundayNotif() {
-  // Get the current date
-  const today = new Date();
+    // Get the current date
+    const today = new Date();
 
-  // Check if today is Sunday (0 represents Sunday in JavaScript)
-  if (today.getDay() === 0) {
-    // Perform your operation here
-    const beginningOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    const timestamp = beginningOfToday.getTime();
-    const hasNotif = localStorage.getItem(`sunday_notif_${timestamp}`)
-    if (!hasNotif) {
-      localStorage.setItem(`sunday_notif_${timestamp}`, true)
-      shouldHideCard = true
+    // Check if today is Sunday (0 represents Sunday in JavaScript)
+    if (today.getDay() === 0) {
+        // Perform your operation here
+        const beginningOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const timestamp = beginningOfToday.getTime();
+        const hasNotif = localStorage.getItem(`sunday_notif_${timestamp}`)
+        if (!hasNotif) {
+            localStorage.setItem(`sunday_notif_${timestamp}`, true)
+            shouldHideCard = true
 
-      const htmlContent = `<div style="max-height: 500px; overflow:scroll; max-width: 28rem; margin-top: 1.5rem; padding: 1.5rem; background-color: #f3f4f6; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);">
+            const htmlContent = `<div style="max-height: 500px; overflow:scroll; max-width: 28rem; margin-top: 1.5rem; padding: 1.5rem; background-color: #f3f4f6; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);">
                 <h2 style="font-size: 1.125rem; color: #1f2937; margin-bottom: 1rem;">Take a look at your weekly screen time report</h2>
                 <div style="display: flex; justify-content: center; align-items: center; margin: 0.5rem;">
                   <button 
@@ -262,9 +268,9 @@ function showSundayNotif() {
                   </button>
               </div>
               </div>`
-      injectFloatingCard(htmlContent, true)
+            injectFloatingCard(htmlContent, true)
+        }
     }
-  }
 
 }
 
